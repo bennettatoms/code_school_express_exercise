@@ -3,10 +3,20 @@ var app = express();
 var bodyParser = require('body-parser'); // have to mount it in our application
 var urlencode = bodyParser.urlencoded({ extended: false }); // and specify what kind of encoding we're using
 
+// begin Redis connection
 var redis = require('redis');
-var client = redis.createClient();
+
+if (process.env.REDISTOGO_URL) {
+  var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+  var client = redis.createClient(rtg.port, rtg.hostname);
+  client.auth(rtg.auth.split(":")[1]);
+} else {
+  var client = redis.createClient();
+}
 
 client.select((process.env.NODE_ENV || 'development').length);
+// end Redis connection
+
 
 client.hset('cities', 'Lotopia', 'lotopia description'); // see redis readme -- this sets hash in db
 client.hset('cities', 'Caspiana', 'caspiana description');
