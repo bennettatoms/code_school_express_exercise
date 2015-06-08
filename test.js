@@ -75,12 +75,13 @@ describe('Creating new cities', function() {
       .expect(/springfield/i, done); // return a string with case-insensitive springfield somewhere
   });
 
-  // it('Returns initial cities', function(done) {
+  it('Validates city name and description', function(done) {
 
-  //   request(app)
-  //     .get('/cities')
-  //     .expect(JSON.stringify(['Lotopia', 'Caspiana', 'Indigo']), done);
-  // });
+    request(app)
+      .post('/cities')
+      .send('name=&description=')  // try to send empty name and description
+      .expect(400, done); // 400 is a bad request
+  });
 });
 
 describe('Deleting cities', function() {
