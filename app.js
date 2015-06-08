@@ -17,7 +17,6 @@ if (process.env.REDISTOGO_URL) {
 
 // end Redis connection
 
-
 client.hset('cities', 'Lotopia', 'lotopia description'); // see redis readme -- this sets hash in db
 client.hset('cities', 'Caspiana', 'caspiana description');
 client.hset('cities', 'Indigo', 'indigo description');
@@ -51,6 +50,16 @@ app.delete('/cities/:name', function(request, response) {
   client.hdel('cities', request.params.name, function(error) { // redis (and node-redis) hash delete command
     if (error) throw error;
     response.sendStatus(204);
+  });
+});
+
+app.get('/cities/:name', function(request, response) {
+  client.hget('cities', request.params.name, function(error, description) {
+    response.render('show.ejs', 
+                    { city: 
+                      { name: request.params.name, description: description } 
+                    }
+    ); /* render function's first argument is template, second argument is the data that we want to pass through to the template */
   });
 });
 

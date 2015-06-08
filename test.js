@@ -106,11 +106,32 @@ describe('Deleting cities', function() {
   });
 });
 
-  // it('Returns the city name', function(done) {
+describe('Shows city info', function() {
 
-  //   request(app)
-  //     .delete('/cities')
-  //     .send('name=Springfield&description=where+the+simpsons+live')
-  //     .expect(/springfield/i, done);
-  // });
+  before(function() {
+    client.hset('cities', 'Banana', 'a tasty city');
+  });
 
+  after(function() {
+    client.flushdb();
+  });
+
+  it('Returns status code 200', function(done) {
+    request(app)
+      .get('/cities/Banana')
+      .expect(200, done);
+  });
+
+  it('Returns HTML format', function(done) {
+    request(app)
+      .get('/cities/Banana')
+      .expect('Content-Type', /html/, done);
+  });
+
+  it('Returns information for given city', function(done) {
+    request(app)
+      .get('/cities/Banana')
+      .expect(/tasty/, done);
+
+  });
+});
