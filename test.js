@@ -83,5 +83,33 @@ describe('Creating new cities', function() {
   // });
 });
 
+describe('Deleting cities', function() {
+  
+  before(function() {
+    client.hset('cities', 'Banana', 'a tasty fruit'); // add city to be deleted  
+  });
 
+  after(function() {
+    client.flushdb(); // clear db after test runs so doesn't trip up other tests
+  });
+
+  it('Returns a 204 status code', function(done) { // 204 is successful, but doesn't return data
+    
+    request(app)
+      .delete('/cities/Banana')
+      .expect(204)
+      .end(function(error) {
+        if (error) throw error;
+        done();
+      });
+  });
+});
+
+  // it('Returns the city name', function(done) {
+
+  //   request(app)
+  //     .delete('/cities')
+  //     .send('name=Springfield&description=where+the+simpsons+live')
+  //     .expect(/springfield/i, done);
+  // });
 

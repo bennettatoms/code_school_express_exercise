@@ -12,9 +12,9 @@ if (process.env.REDISTOGO_URL) {
   client.auth(rtg.auth.split(":")[1]);
 } else {
   var client = redis.createClient();
+  client.select((process.env.NODE_ENV || 'development').length);
 }
 
-client.select((process.env.NODE_ENV || 'development').length);
 // end Redis connection
 
 
@@ -41,6 +41,13 @@ app.post('/cities', urlencode, function(request, response) {
     if (error) throw error;
     response.status(201).json(newCity.name);
   })
+});
+
+app.delete('/cities/:name', function(request, response) {
+  client.hdel('cities', request.params.name, function(error) { // redis (and node-redis) hash delete command
+    if (error) throw error;
+    response.sendStatus(204);
+  });
 });
 
 module.exports = app; // our application is encapsulated inside of a node module
